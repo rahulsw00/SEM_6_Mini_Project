@@ -5,15 +5,24 @@ import time
 
 #creating URL from the input for different shopping websites
 prod = input("What product do you want to search: ")
-i = 0
+
 prod_list = prod.split()
-print(prod_list)
-newprod = " "
-for i in range(len(prod_list)):
-    newprod = newprod + prod_list[i] + "+"
-    #URL = URL + newprod
+URL = ""
+for i in prod_list:
+    URL = URL + i + "+"
 
-URL_Amazon = "https://www.amazon.in/s?k=" + newprod
-URL_Flipkart = "https://www.flipkart.com/search?q=" + newprod
-print(URL_Amazon)
+URL_Amazon = "https://www.amazon.in/s?k=" + URL
+URL_Flipkart = "https://www.flipkart.com/search?q=" + URL + '&sort=relevance'
+print(URL_Flipkart)
 
+headers = {'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/W.X.Y.Z Safari/537.36'}
+
+page = requests.get(URL_Flipkart, headers= headers)
+
+soup = BeautifulSoup(page.content, 'html.parser')
+soup.prettify()
+
+top_flexbox = soup.find('div', class_ = '_13oc-S')
+
+for i in top_flexbox:
+    print(i)
