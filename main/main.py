@@ -24,5 +24,11 @@ soup.prettify()
 
 top_flexbox = soup.find('div', class_ = '_13oc-S')
 
-for i in top_flexbox:
-    print(i)
+print(top_flexbox.prettify())
+top_info = top_flexbox.select_one('img')
+top_price = top_flexbox.select('div', class_ = '_30jeq3')
+print(top_price)
+#print(top_info)
+alt = top_info.get('alt')
+src = top_info.get('src')
+print(alt, src)
