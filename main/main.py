@@ -11,7 +11,7 @@ top_price = []
 product = input("Enter product name: ")
 
 url = 'https://www.flipkart.com/search?q='
-rurl = '&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off&page='
+eurl = '&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off&page='
 
 
 class webscreapping:
@@ -19,7 +19,7 @@ class webscreapping:
     def __init__(self, url):
 
         for page in range(page_range):
-            r = requests.get(url + str(product) + rurl + str(page))
+            r = requests.get(url + str(product) + eurl + str(page))
             data = r.content
             soup = BeautifulSoup(data, "html.parser") 
             names = soup.findAll('div', attrs={'class': '_4rR01T'})
