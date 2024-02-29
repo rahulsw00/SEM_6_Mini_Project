@@ -1,34 +1,50 @@
-import requests
+import pandas as pd
 from bs4 import BeautifulSoup
-import pandas as pandas 
-import time
+import numpy as np
+import requests
 
-#creating URL from the input for different shopping websites
-prod = input("What product do you want to search: ")
+page_range = (1)
+top_img = []
+top_name = []
+top_price = []
 
-prod_list = prod.split()
-URL = ""
-for i in prod_list:
-    URL = URL + i + "+"
+product = input("Enter product name: ")
 
-URL_Amazon = "https://www.amazon.in/s?k=" + URL
-URL_Flipkart = "https://www.flipkart.com/search?q=" + URL + '&sort=relevance'
-print(URL_Flipkart)
+url = 'https://www.flipkart.com/search?q='
+rurl = '&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off&page='
 
-headers = {'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/W.X.Y.Z Safari/537.36'}
 
-page = requests.get(URL_Flipkart, headers= headers)
+class webscreapping:
 
-soup = BeautifulSoup(page.content, 'html.parser')
-soup.prettify()
+    def __init__(self, url):
 
-top_flexbox = soup.find('div', class_ = '_13oc-S')
+        for page in range(page_range):
+            r = requests.get(url + str(product) + rurl + str(page))
+            data = r.content
+            soup = BeautifulSoup(data, "html.parser") 
+            names = soup.findAll('div', attrs={'class': '_4rR01T'})
+            prices = soup.findAll('div', attrs={'class': '_30jeq3 _1_WHN1'})
+            images = soup.findAll('img', attrs={'class': '_396cs4'})
+            for name in names:
+                top_name.append(name.text)
+                break
+            for price in prices:
+                top_price.append(price.text)
+                break
+            for img in images:
+                top_img.append(img)
+                break
+            break
 
-print(top_flexbox.prettify())
-top_info = top_flexbox.select_one('img')
-top_price = top_flexbox.select('div', class_ = '_30jeq3')
-print(top_price)
-#print(top_info)
-alt = top_info.get('alt')
-src = top_info.get('src')
-print(alt, src)
+def data(top_name, top_price, top_img):
+    df = pd.DataFrame()
+    df['Name'] = top_name
+    df['Price'] = top_price
+    df['Image'] = top_img
+    print("Scrapping Done.......... ")
+    print(df)
+
+
+ws1 = webscreapping(url)
+data(top_name, top_price, top_img)
+
