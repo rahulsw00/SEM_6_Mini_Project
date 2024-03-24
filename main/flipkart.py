@@ -1,10 +1,5 @@
-import pandas as pd
 from bs4 import BeautifulSoup
-import numpy as np
 import requests
-
-
-
 
 url = 'https://www.flipkart.com/search?q='
 eurl = '&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off&page=1'
@@ -14,7 +9,7 @@ class flipkart_scraper:
     def __init__(self, product):   
         self.flipkart_data = []
 
-        for page in range(1):
+        for i in range(1):
             r = requests.get(url + str(product) + eurl)
             data = r.content
             soup = BeautifulSoup(data, "html.parser") 
