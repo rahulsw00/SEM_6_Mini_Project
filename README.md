@@ -18,7 +18,7 @@ to run ```main.py``` , need to install a few libraries.
 Create Python virtual environment:
 ```virtualenv venv```
 
-###Flask:
+### Flask:
 ```pip install flask```
 
 
