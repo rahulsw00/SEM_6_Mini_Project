@@ -15,6 +15,7 @@ to run ```main.py``` , need to install a few libraries.
 
 ### Install Virtual Environment:
 ```pip install virtualenv```
+
 Create Python virtual environment:
 ```virtualenv venv```
 
