@@ -1,18 +1,14 @@
 import pandas as pd
-import numpy as np
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 from flask import Flask, request, render_template
 import time
 import requests
 
-empty = np.full((3), 'NaN')
-product = input("Enter product name: ")
-dic = {'Name': empty, 'Price': empty, 'Image': empty, 'Link': empty}
-df = pd.DataFrame(dic)
+
+df = pd.DataFrame(columns=['Name', 'Price', 'Image', 'Link'])
 
 class FlipClass:
     def __init__(self, product):   
@@ -23,6 +19,7 @@ class FlipClass:
         data = r.content
         soup = bs(data, "html.parser") 
         div = soup.findAll('div', attrs={'class': '_13oc-S'})
+        sty = 'a'
         for layout in div:
             sty = layout.div['style']
             break
@@ -53,7 +50,10 @@ class CromaClass:
     def __init__(self, product):
         url = 'https://www.croma.com/searchB?q='
         eurl = '%3AtopRated&text'
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        options = Options()
+        options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2,})
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
         driver.get(url + str(product) + eurl + str(product))
         time.sleep(1)
         soup=bs(driver.page_source,'html.parser')
@@ -77,15 +77,18 @@ class CromaClass:
             for href in a:
                 df.loc[1,'Link'] = 'https://www.croma.com' + href['href']
                 break
-
+        driver.quit()
 class JioClass:
     def __init__(self,product):
         url = "https://www.jiomart.com/search/"
-        #eurl = "/in/prod_mart_master_vertical"
+        eurl = "/in/prod_mart_master_vertical"
 
 
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-        driver.get(url + str(product) )
+        options = Options()
+        options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2,})
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
+        driver.get(url + str(product) + eurl)
         time.sleep(1)
         soup=bs(driver.page_source,'html.parser')
         names = soup.findAll('div', attrs={'class': 'plp-card-details-name line-clamp jm-body-xs jm-fc-primary-grey-80'})
@@ -104,10 +107,25 @@ class JioClass:
         for href in refs:
             df.loc[2,'Link'] = 'https://www.jiomart.com/' + href['href']
             break
+        driver.quit()
 
 
-FlipClass(product)
-CromaClass(product)
-JioClass(product)
+app = Flask(__name__)
 
-print(df)
+@app.route('/', methods=['GET', 'POST'])
+def webapp():
+    if request.method == 'POST':
+        product = request.form.get('search')
+        FlipClass(product)
+        JioClass(product)
+        CromaClass(product)
+        return render_template("index.html", data=df.to_dict(orient='records'))
+
+    else:
+        return render_template("index.html")
+if __name__ == '__main__':
+    app.run(debug= True)
+
+
+
+
