@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+<div>
+    <div class="g-block-1">
+        <div class="block1">
+            <form action ='{{ url_for("webapp")}}' method="post">
+                <input type="text" name="search" placeholder="enter name of product in detail..." style="width: 500px; height: 40px;">
+                <input type="submit" value="Search" style="width: 80px; height: 40px;">
+            </form>
+        </div>
+        
+        {% for row in data %}
+        <div class="block2">
+            <div class="card mb-3" style="max-width: 800px;" >
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img src="{{row['Image']}}" class="img-fluid rounded-start" alt="image" height="200" width="200" >
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">{{row['Price']}}</h5>
+                      <p class="card-text">{{row['Name']}}</p>
+                      <a href="{{row['Link']}}" class="btn btn-primary">BUY</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}
+
