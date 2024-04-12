@@ -6,9 +6,10 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from flask import Flask, request, render_template
 import time
 import requests
+import threading
 
 
-df = pd.DataFrame(columns=['Name', 'Price', 'Image', 'Link'])
+df = pd.DataFrame(columns=['Name', 'Price', 'Image', 'Link', 'web'])
 
 class FlipClass:
     def __init__(self, product):   
@@ -45,6 +46,7 @@ class FlipClass:
         for href in refs:
             df.loc[0,'Link'] = 'https://www.flipkart.com' + href['href']
             break
+        df.loc[0,'web'] = 'Flipkart'
 
 class CromaClass:
     def __init__(self, product):
@@ -52,7 +54,7 @@ class CromaClass:
         eurl = '%3AtopRated&text'
         options = Options()
         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2,})
-        options.add_argument("--headless")
+        #options.add_argument("--headless")
         driver = webdriver.Chrome(options=options)
         driver.get(url + str(product) + eurl + str(product))
         time.sleep(1)
@@ -78,6 +80,7 @@ class CromaClass:
                 df.loc[1,'Link'] = 'https://www.croma.com' + href['href']
                 break
         driver.quit()
+        df.loc[1, 'web'] = 'Croma'
 class JioClass:
     def __init__(self,product):
         url = "https://www.jiomart.com/search/"
@@ -86,7 +89,7 @@ class JioClass:
 
         options = Options()
         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2,})
-        options.add_argument("--headless")
+        #options.add_argument("--headless")
         driver = webdriver.Chrome(options=options)
         driver.get(url + str(product) + eurl)
         time.sleep(1)
@@ -108,6 +111,8 @@ class JioClass:
             df.loc[2,'Link'] = 'https://www.jiomart.com/' + href['href']
             break
         driver.quit()
+        df.loc[2, 'web'] = 'JioMart'
+
 
 
 app = Flask(__name__)
@@ -116,9 +121,20 @@ app = Flask(__name__)
 def webapp():
     if request.method == 'POST':
         product = request.form.get('search')
-        FlipClass(product)
-        JioClass(product)
-        CromaClass(product)
+        t1 = threading.Thread(target=FlipClass, args=(product,))
+        t2 = threading.Thread(target=CromaClass, args=(product,))
+        t3 = threading.Thread(target=JioClass, args=(product,))
+
+        t1.start()
+        t2.start()
+        t3.start()
+
+        t1.join()
+        t2.join()
+        t3.join()
+        # FlipClass(product)
+        # CromaClass(product)
+        # JioClass(product)
         return render_template("index.html", data=df.to_dict(orient='records'))
 
     else:
