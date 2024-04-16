@@ -110,7 +110,7 @@ class JioClass:
         for href in refs:
             df.loc[2,'Link'] = 'https://www.jiomart.com/' + href['href']
             break
-        driver.quit()
+        #driver.quit()
         df.loc[2, 'web'] = 'JioMart'
 
 
@@ -141,7 +141,3 @@ def webapp():
         return render_template("index.html")
 if __name__ == '__main__':
     app.run(debug= True)
-
-
-
-
