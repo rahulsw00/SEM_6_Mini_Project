@@ -19,21 +19,21 @@ class FlipClass:
         r = requests.get(url + str(product) + eurl)
         data = r.content
         soup = bs(data, "html.parser") 
-        div = soup.findAll('div', attrs={'class': '_13oc-S'})
+        div = soup.findAll('div', attrs={'class': '_75nlfW'})
         sty = 'a'
         for layout in div:
             sty = layout.div['style']
             break
         if (sty == 'width:25%'):
-            names = soup.findAll('a', attrs={'class': 's1Q9rs'})
-            prices = soup.findAll('div', attrs={'class': '_30jeq3'})
-            images = soup.findAll('img', attrs={'class': '_396cs4'})
-            refs = soup.findAll('a', attrs={'class': 's1Q9rs'})
+            names = soup.findAll('a', attrs={'class': 'wjcEIp'})
+            prices = soup.findAll('div', attrs={'class': 'Nx9bqj'})
+            images = soup.findAll('img', attrs={'class': 'DByuf4'})
+            refs = soup.findAll('a', attrs={'class': 'wjcEIp'})
         else:
-            names = soup.findAll('div', attrs={'class': '_4rR01T'})
-            prices = soup.findAll('div', attrs={'class': '_30jeq3 _1_WHN1'})
-            images = soup.findAll('img', attrs={'class': '_396cs4'})
-            refs = soup.findAll('a', attrs={'class': '_1fQZEK'})
+            names = soup.findAll('div', attrs={'class': 'KzDlHZ'})
+            prices = soup.findAll('div', attrs={'class': 'Nx9bqj _4b5DiR'})
+            images = soup.findAll('img', attrs={'class': 'DByuf4'})
+            refs = soup.findAll('a', attrs={'class': 'CGtC98'})
         for name in names:
             df.loc[0, 'Name'] = name.text
             break
@@ -62,7 +62,7 @@ class CromaClass:
         names = soup.findAll('h3', attrs={'class': 'plp-prod-title'})
         prices = soup.findAll('span', attrs={'class': 'plp-srp-new-amount'})
         images = soup.findAll('div', attrs={'class': 'product-img plp-card-thumbnail plpnewsearch'})
-        refs = soup.findAll('h3', attrs={'class': 'product-title plp-prod-title'})
+        #refs = soup.findAll('h3', attrs={'class': 'product-title plp-prod-title'})
 
         for name in names:
             df.loc[1, 'Name'] = name.text
@@ -81,14 +81,14 @@ class CromaClass:
                 break
         driver.quit()
         df.loc[1, 'web'] = 'Croma'
+
 class JioClass:
     def __init__(self,product):
         url = "https://www.jiomart.com/search/"
         eurl = "/in/prod_mart_master_vertical"
 
-
         options = Options()
-        options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2,})
+        #options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2,})
         #options.add_argument("--headless")
         driver = webdriver.Chrome(options=options)
         driver.get(url + str(product) + eurl)
@@ -127,6 +127,7 @@ def webapp():
 
         t1.start()
         t2.start()
+        time.sleep(2)
         t3.start()
 
         t1.join()
@@ -139,5 +140,6 @@ def webapp():
 
     else:
         return render_template("index.html")
+    
 if __name__ == '__main__':
     app.run(debug= True)
