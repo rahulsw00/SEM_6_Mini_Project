@@ -113,6 +113,42 @@ class JioClass:
         #driver.quit()
         df.loc[2, 'web'] = 'JioMart'
 
+class reliance:
+    def __init__(self,product):
+        url = "https://www.reliancedigital.in/page/"
+        eurl = ""
+
+        r = requests.get(url + str(product) + eurl)
+        data = r.content
+        soup = bs(data, "html.parser") 
+        div = soup.findAll('div', attrs={'class': '_75nlfW'})
+        sty = 'a'
+        for layout in div:
+            sty = layout.div['style']
+            break
+        if (sty == 'width:25%'):
+            names = soup.findAll('a', attrs={'class': 'wjcEIp'})
+            prices = soup.findAll('div', attrs={'class': 'Nx9bqj'})
+            images = soup.findAll('img', attrs={'class': 'DByuf4'})
+            refs = soup.findAll('a', attrs={'class': 'wjcEIp'})
+        else:
+            names = soup.findAll('div', attrs={'class': 'KzDlHZ'})
+            prices = soup.findAll('div', attrs={'class': 'Nx9bqj _4b5DiR'})
+            images = soup.findAll('img', attrs={'class': 'DByuf4'})
+            refs = soup.findAll('a', attrs={'class': 'CGtC98'})
+        for name in names:
+            df.loc[2, 'Name'] = name.text
+            break
+        for price in prices:
+            df.loc[2, 'Price'] = price.text
+            break
+        for img in images:
+            df.loc[2, 'Image'] = img['src']
+            break
+        for href in refs:
+            df.loc[2,'Link'] = 'https://www.flipkart.com' + href['href']
+            break
+        df.loc[2,'web'] = 'Reliance Digital'
 
 
 app = Flask(__name__)
@@ -127,7 +163,7 @@ def webapp():
 
         t1.start()
         t2.start()
-        time.sleep(2)
+        #time.sleep(2)
         t3.start()
 
         t1.join()
